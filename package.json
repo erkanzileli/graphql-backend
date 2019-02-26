@@ -1,0 +1,19 @@
+{
+  "name": "mongo-tutorial",
+  "version": "1.0.0",
+  "description": "A tutorial for my mongo learning series.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "mongo",
+    "tutorial"
+  ],
+  "author": "Erkan <erkanzileli@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^3.1.13"
+  }
+}
