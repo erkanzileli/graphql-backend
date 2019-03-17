@@ -5,19 +5,26 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "nodemon --exec babel-node index.js"
   },
   "keywords": [
     "mongo",
-    "tutorial"
+    "express",
+    "es6",
+    "eslint-standard"
   ],
   "author": "Erkan <erkanzileli@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "assert": "^1.4.1",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
     "mongodb": "^3.1.13"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-watch": "^7.0.0",
     "eslint": "^5.14.1",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.16.0",
