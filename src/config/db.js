@@ -1,13 +1,10 @@
 import { MongoClient } from 'mongodb'
 
-// Connection URL
-const url = 'mongodb://localhost:27017'
+const URL = `mongodb://localhost:27017`
 
-// Create a new MongoClient
-const client = new MongoClient(url, { useNewUrlParser: true })
+const client = new MongoClient(URL, { useNewUrlParser: true })
 
-// Use connect method to connect to the Server
-client.connect(function (err) {
+client.connect(err => {
   if (err) {
     console.error('err', err)
   } else {
