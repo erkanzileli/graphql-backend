@@ -14,16 +14,20 @@ pipeline {
             }
         }
         stage('Deploy') {
-            steps {
+            parallel {
                 stages {
                     stage('Deploy Preview') {
-                        
+                        steps {
+                            echo 'Deploying Preview'
+                        }
                     }
                     stage('Deploy Production') {
-                        
+                        steps {
+                            echo 'Deploying Production'
+                        }                        
                     }
                 }
-            }            
+            }
         }
     }
 }
