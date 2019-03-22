@@ -9,8 +9,10 @@ pipeline {
             }
         }
         stage('Push Image') {
+            agent { label 'jenkins'}
             steps {
                 echo 'Docker image pushing..'
+                unstash 'dockerfile'
                 docker.withRegistry('http://18.184.154.149:5000') {
                     def customImage = docker.build("mongo-boilerplate:${BUILD_NUMBER}",".")
                     customImage.push()
