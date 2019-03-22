@@ -12,7 +12,6 @@ pipeline {
             }
         }
         stage('Push Image') {
-            agent { label 'jenkins'}
             steps {
                 echo 'Docker image pushing..'
                 script {
