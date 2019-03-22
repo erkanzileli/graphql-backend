@@ -13,8 +13,10 @@ pipeline {
         }
         stage('Push Image') {
             steps {
+                stash includes: 'Dockerfile', name: 'dockerfile'
                 echo 'Docker image pushing..'
                 script {
+                    unstash 'dockerfile'
                     docker.withRegistry('http://18.184.154.149:5000') {
                         def customImage = docker.build("my-image:${env.BUILD_NUMBER}")
                         /* Push the container to the custom Registry */
