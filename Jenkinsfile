@@ -1,6 +1,9 @@
 // Jenkinsfile (Declarative Pipeline)
 pipeline {
     agent any
+    environment {
+        registry = "https://registry.k8s.kalderasoft.xyz/my-image"
+    }
 
     stages {
         stage('Test') {
@@ -12,10 +15,12 @@ pipeline {
             agent { label 'jenkins'}
             steps {
                 echo 'Docker image pushing..'
-                unstash 'dockerfile'
-                docker.withRegistry('http://18.184.154.149:5000') {
-                    def customImage = docker.build("mongo-boilerplate:${BUILD_NUMBER}",".")
-                    customImage.push()
+                script {
+                    docker.withRegistry('http://18.184.154.149:5000') {
+                        def customImage = docker.build("my-image:${env.BUILD_NUMBER}")
+                        /* Push the container to the custom Registry */
+                        customImage.push()
+                    }
                 }
             }
         }
