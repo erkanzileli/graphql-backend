@@ -1,7 +1,6 @@
-import { books } from './book'
+import deepmerge from 'deepmerge'
 
-export default {
-  Query: {
-    books: () => books
-  }
-}
+import book from './book'
+import author from './author'
+
+export default deepmerge.all([author, book])
