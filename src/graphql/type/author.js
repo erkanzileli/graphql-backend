@@ -6,4 +6,9 @@ type Author {
 
 type Query {
   authors: [Author]
-}`
+}
+
+type Mutation {
+  createAuthor(firstName: String!, lastName: String!): Author
+}
+`
