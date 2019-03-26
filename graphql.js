@@ -9,8 +9,9 @@ const typeDefs = gql`
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: () => ({
-    db: connection.db('fake-db')
+  context: ({ req }) => ({
+    db: connection.db('fake-db'),
+    token: req.headers.authorization || ''
   }),
   engine: {
     apiKey: 'service:erkanzileli-4599:m0p1ZxPRnJ-ws8QER61mtA',
