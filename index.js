@@ -1,20 +1,37 @@
-import express from 'express'
+import { ApolloServer, gql } from 'apollo-server'
+import types from './src/graphql/type/index'
+import resolvers from './src/graphql/resolver/index'
 import connection from './src/config/db'
 
-const PORT = 3000
-
-const app = express()
-
-app.use(express.json())
-
-app.get('/', async (req, res) => {
-  var docs = await connection.db('myDB')
-    .collection('inventory')
-    .find({})
-    .toArray()
-  return res.status(200).send(docs)
+const typeDefs = gql`
+  ${types}
+`
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }) => ({
+    db: connection.db('fake-db'),
+    token: req.headers.authorization || ''
+  }),
+  engine: {
+    apiKey: 'service:erkanzileli-4599:m0p1ZxPRnJ-ws8QER61mtA',
+    generateClientInfo: ({ request }) => {
+      const headers = request.http & request.http.headers
+      if (headers) {
+        return {
+          clientName: headers['apollo-client-name'],
+          clientVersion: headers['apollo-client-version']
+        }
+      } else {
+        return {
+          clientName: 'Unknown Client',
+          clientVersion: 'Unversioned'
+        }
+      }
+    }
+  }
 })
 
-app.listen(PORT)
-
-console.log('app running on:', `http://localhost:${PORT}`)
+server.listen().then(({ url }) => {
+  console.log(`🚀  Server ready at ${url}`)
+})
