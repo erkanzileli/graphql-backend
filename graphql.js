@@ -11,7 +11,24 @@ const server = new ApolloServer({
   resolvers,
   context: () => ({
     db: connection.db('fake-db')
-  })
+  }),
+  engine: {
+    apiKey: 'service:erkanzileli-4599:m0p1ZxPRnJ-ws8QER61mtA',
+    generateClientInfo: ({ request }) => {
+      const headers = request.http & request.http.headers
+      if (headers) {
+        return {
+          clientName: headers['apollo-client-name'],
+          clientVersion: headers['apollo-client-version']
+        }
+      } else {
+        return {
+          clientName: 'Unknown Client',
+          clientVersion: 'Unversioned'
+        }
+      }
+    }
+  }
 })
 
 server.listen().then(({ url }) => {
