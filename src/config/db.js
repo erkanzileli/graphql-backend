@@ -8,7 +8,7 @@ client.connect(err => {
   if (err) {
     console.error('err', err)
   } else {
-    console.log('Connected successfully to server')
+    console.log('Connected successfully to database server')
   }
 })
 

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --exec babel-node index.js",
-    "graphql": "nodemon --exec babel-node graphql.js"
+    "graphql": "nodemon --exec babel-node graphql.js",
+    "faker": "babel-node faker.js"
   },
   "keywords": [
     "mongo",
@@ -39,6 +40,7 @@
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
+    "faker": "^4.1.0",
     "nodemon": "^1.18.10"
   }
 }
