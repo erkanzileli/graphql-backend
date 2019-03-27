@@ -1,7 +1,11 @@
-import { ApolloServer, gql } from 'apollo-server'
+import express from 'express'
+import { ApolloServer, gql } from 'apollo-server-express'
+
 import types from './src/graphql/type/index'
 import resolvers from './src/graphql/resolver/index'
 import connection from './src/config/db'
+
+const PORT = process.env.PORT || 4000
 
 const typeDefs = gql`
   ${types}
@@ -14,24 +18,16 @@ const server = new ApolloServer({
     token: req.headers.authorization || ''
   }),
   engine: {
-    apiKey: 'service:erkanzileli-4599:m0p1ZxPRnJ-ws8QER61mtA',
-    generateClientInfo: ({ request }) => {
-      const headers = request.http & request.http.headers
-      if (headers) {
-        return {
-          clientName: headers['apollo-client-name'],
-          clientVersion: headers['apollo-client-version']
-        }
-      } else {
-        return {
-          clientName: 'Unknown Client',
-          clientVersion: 'Unversioned'
-        }
-      }
-    }
+    apiKey: 'service:erkanzileli-4599:m0p1ZxPRnJ-ws8QER61mtA'
   }
 })
 
-server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`)
+const app = express()
+
+server.applyMiddleware({ app, path: '/graphql' })
+
+app.listen({ port: PORT }, () => {
+  console.log(
+    `🚀  Server ready at http://localhost:${PORT}${server.graphqlPath}`
+  )
 })
