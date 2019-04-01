@@ -1,8 +1,9 @@
 import { MongoClient } from 'mongodb'
 
-const URL = `mongodb://localhost:27017`
+const uri =
+  'mongodb+srv://api:<qe1oDfp3VkyEEBw5>@graphql-backend-mongo-cluster-pej2l.mongodb.net/test?retryWrites=true'
 
-const client = new MongoClient(URL, { useNewUrlParser: true })
+const client = new MongoClient(uri, { useNewUrlParser: true })
 
 client.connect(err => {
   if (err) {
