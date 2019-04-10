@@ -1,9 +1,11 @@
 {
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "mongo": true,
+    "jest": true
   },
-  "extends": "standard",
+  "extends": ["standard", "plugin:jest/recommended"],
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module"
