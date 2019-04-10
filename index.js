@@ -1,7 +1,7 @@
 import express from 'express'
 import server from './src/server'
 
-const PORT = process.env.PORT || 80
+const PORT = process.env.PORT || 4000
 
 const app = express()
 
