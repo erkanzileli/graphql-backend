@@ -1,5 +1,5 @@
-const MongoClient = require('mongodb').MongoClient
-const faker = require('faker')
+import { MongoClient } from 'mongodb'
+import faker from 'faker'
 
 faker.locale = 'tr'
 
@@ -7,7 +7,7 @@ faker.seed(42)
 
 var fakeDatas = []
 
-for (var i = 0; i < 950; i++) {
+for (var i = 0; i < 50; i++) {
   fakeDatas.push({
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
@@ -29,6 +29,7 @@ client.connect(err => {
       .db('fake-db')
       .collection('users')
       .insertMany(fakeDatas)
+      .then(() => client.close())
+      .catch(err => console.error(err))
   }
-  client.close()
 })

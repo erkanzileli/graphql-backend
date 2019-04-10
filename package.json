@@ -7,7 +7,7 @@
     "test": "jest",
     "develop": "nodemon --exec babel-node index.js",
     "start": "babel-node index.js",
-    "faker": "babel-node faker.js"
+    "faker": "babel-node src/generateFakeData.js"
   },
   "keywords": [
     "apollo",
