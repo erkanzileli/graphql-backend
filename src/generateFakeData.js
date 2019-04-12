@@ -12,7 +12,8 @@ for (var i = 0; i < 50; i++) {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
-    phone: faker.phone.phoneNumber()
+    phone: faker.phone.phoneNumber(),
+    createdAt: new Date()
   })
 }
 
