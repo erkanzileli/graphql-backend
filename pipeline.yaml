@@ -21,6 +21,7 @@ jobs:
   - put: graphql-backend
     params:
       build: source-code
+    get_params:
       skip_download: true    
 
   # - task: do-your-task-here
