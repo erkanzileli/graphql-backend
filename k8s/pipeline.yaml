@@ -17,7 +17,7 @@ resources:
     source:
       server: https://192.168.39.9:8443
       namespace: graphql-backend
-      token: "eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJncmFwaHFsLWJhY2tlbmQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiZGVmYXVsdC10b2tlbi1wdnRteiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiMzFiYWUyODctNWQ2NS0xMWU5LWE2MjMtMTQyMTU0ZmQ2MDk4Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OmdyYXBocWwtYmFja2VuZDpkZWZhdWx0In0.kouww34SylncbhEdEKlmlrGXYtmoNSvWA4raQY8JD6wkph8z8UhkLIlL6WFBSEGSrZHkmBVq6adn4FXWAh0sDjo0h5hPaSHOyM6mhiEtv3JJJkURrkzK9itXMUETjB8KWqWWxpi6hEa3obPsCm1bL76fLzUR3Bn9UwiQsdYkuCt8EbvWoXvY6hVZ5Kx9Yt5QK2_rcXB-5yIsHN1kHqNidyqlBIz9t5EblkgnjGxqZPxApMRjf_da5JgSO-owUljONsVqLgAVgTkQWBiyc6NDlw3TQ0LZ5lGwue0f8b6CIzwEgv9NjmIVSXPZyjrjMI0jmSsg2kJdoRLn8G3tpmiK7w"
+      token: "eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJ0dGwtY29udHJvbGxlci10b2tlbi1zcHRuciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJ0dGwtY29udHJvbGxlciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjU2MjVjYjUwLTVkNjAtMTFlOS1hNjIzLTE0MjE1NGZkNjA5OCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTp0dGwtY29udHJvbGxlciJ9.parfgbcK2m0agSG7L5Hm8EV2RIeM3AHddXlQqf3tg0xeBwDy6QusdjuiRGfT9ay5-hP-WZ4VMufdiopbb_Xvhnp82u79x-2o3LinK7IVuJgfY-J6FqwNt3tN5i5EOvzDye82u49HV0IAffQIsGVheFVVmQjTjLC1SUXBHQU8_u670kQUxZ7GYGtrDEp63jC9U8Q7Dst8kg2mm046R5jWSOL5F-jAbH49jxyrUZeTvoO1k8MEwp42CrX4EFL3Hjs1Xfk87Xdv2T-yH1D-W5i6Pw8l_UcmmwH1k6Z8hD5fDLNLb4CKbl26xCo6JT-FDhfBqj4OaqvfW3p942gw5zE35A"
       # certificate_authority: /home/erkanzileli/.minikube/ca.crt
       insecure_skip_tls_verify: true
   - name: app-image
@@ -39,13 +39,13 @@ jobs:
           skip_download: true
   - name: deploy
     plan:
-      - get: app-image
+      - get: source-code
         trigger: true
         passed:
           - "build & push-registry"
       - put: k8s
         params:
-          kubectl: apply -f graphql-backend/k8s/kubernetes.yaml
+          kubectl: apply -f source-code/k8s/deployment.yaml
           wait_until_ready_selector: app=graphql-backend
         get_params:
           skip_download: true
