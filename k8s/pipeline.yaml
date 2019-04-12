@@ -1,0 +1,64 @@
+resource_types:
+  - name: kubernetes
+    type: docker-image
+    source:
+      repository: zlabjp/kubernetes-resource
+      tag: "1.14"
+
+resources:
+  - name: source-code
+    type: git
+    source:
+      branch: master
+      uri: https://github.com/erkanzileli/graphql-backend
+
+  - name: k8s
+    type: kubernetes
+    source:
+      server: https://192.168.39.9:8443
+      namespace: graphql-backend
+      token: "eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJncmFwaHFsLWJhY2tlbmQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiZGVmYXVsdC10b2tlbi1wdnRteiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiMzFiYWUyODctNWQ2NS0xMWU5LWE2MjMtMTQyMTU0ZmQ2MDk4Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OmdyYXBocWwtYmFja2VuZDpkZWZhdWx0In0.kouww34SylncbhEdEKlmlrGXYtmoNSvWA4raQY8JD6wkph8z8UhkLIlL6WFBSEGSrZHkmBVq6adn4FXWAh0sDjo0h5hPaSHOyM6mhiEtv3JJJkURrkzK9itXMUETjB8KWqWWxpi6hEa3obPsCm1bL76fLzUR3Bn9UwiQsdYkuCt8EbvWoXvY6hVZ5Kx9Yt5QK2_rcXB-5yIsHN1kHqNidyqlBIz9t5EblkgnjGxqZPxApMRjf_da5JgSO-owUljONsVqLgAVgTkQWBiyc6NDlw3TQ0LZ5lGwue0f8b6CIzwEgv9NjmIVSXPZyjrjMI0jmSsg2kJdoRLn8G3tpmiK7w"
+      # certificate_authority: /home/erkanzileli/.minikube/ca.crt
+      insecure_skip_tls_verify: true
+  - name: app-image
+    type: docker-image
+    source:
+      repository: 192.168.1.6:5000/grapql-backend
+      tag: "latest"
+      insecure_registries: ["http://192.168.1.6:5000"]
+
+jobs:
+  - name: "build & push-registry"
+    plan:
+      - get: source-code
+        trigger: true
+      - put: app-image
+        params:
+          build: source-code
+        get_params:
+          skip_download: true
+  - name: deploy
+    plan:
+      - get: app-image
+        trigger: true
+        passed:
+          - "build & push-registry"
+      - put: k8s
+        params:
+          kubectl: apply -f graphql-backend/k8s/kubernetes.yaml
+          wait_until_ready_selector: app=graphql-backend
+        get_params:
+          skip_download: true
+    # - task: do-your-task-here
+    #   config:
+    #     platform: linux
+    #     image_resource:
+    #       type: docker-image
+    #       source:
+    #         repository: ubuntu
+    #     run:
+    #       path: bash
+    #       args:
+    #       - -exc
+    #       - |
+    #         du -s -h

@@ -1,0 +1,60 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: graphql-backend
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: graphql-backend
+  name: graphql-backend
+  labels:
+    app: graphql-backend
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  template:
+    metadata:
+      namespace: graphql-backend
+      labels:
+        app: graphql-backend
+    spec:
+      containers:
+        - name: graphql-backend
+          image: 192.168.1.6:5000/graphql-backend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: graphql-backend
+  name: graphql-backend-svc
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+  selector:
+    app: graphql-backend
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: graphql-backend
+  name: graphql-backend-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: graphql-backend.192.168.39.9.nip.io
+      http:
+        paths:
+          - backend:
+              serviceName: graphql-backend-svc
+              servicePort: 80
+---
+
