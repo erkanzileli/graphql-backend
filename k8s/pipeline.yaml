@@ -1,8 +1,8 @@
-# resource_types:
-#   - name: helm
-#     type: docker-image
-#     source:
-#       repository: linkyard/concourse-helm-resource
+resource_types:
+  - name: helm
+    type: docker-image
+    source:
+      repository: linkyard/concourse-helm-resource
 
 resources:
   - name: source-code
@@ -19,15 +19,15 @@ resources:
       username: "admin"
       password: "123qweasd"
 
-  # - name: helm
-  #   type: helm
-  #   source:
-  #     cluster_ca: ((cluster-ca.ca))
-  #     cluster_url: https://35.225.64.169
-  #     repos:
-  #       - name: chartmuseum
-  #         url: http://chartmuseum.34.66.59.109.nip.io
-  #     token: ((admin-user.token))
+  - name: helm
+    type: helm
+    source:
+      cluster_ca: "((cluster-ca.ca))"
+      cluster_url: https://35.238.121.65
+      repos:
+        - name: chartmuseum
+          url: http://chartmuseum.35.202.15.36.nip.io
+      token: ((admin-user-token.token))
 
 jobs:
   - name: "build & push-registry"
@@ -39,50 +39,50 @@ jobs:
           build: source-code
         get_params:
           skip_download: true
-  # - name: deploy
-  #   plan:
-  #     - get: app-image
-  #       passed:
-  #         - "build & push-registry"
-  #       trigger: true
-  #       params:
-  #         save: true
-  #     - task: master-digest
-  #       config:
-  #         platform: linux
-  #         image_resource:
-  #           type: docker-image
-  #           source:
-  #             repository: concourse/buildroot
-  #             tag: git
-  #         run:
-  #           path: sh
-  #           args:
-  #             - -exc
-  #             - |
-  #               cat app-image/digest > ./app-digest/sha
-  #         inputs:
-  #           - name: app-image
-  #         outputs:
-  #           - name: app-digest
-  #     - put: helm
-  #       params:
-  #         chart: chartmuseum/graphql-backend
-  #         namespace: chartmuseum
-  #         override_values:
-  #           - key: registry.server
-  #             value: registry.hub.docker.com
-  #           - key: registry.username
-  #             value: ((registry-info.username))
-  #           - key: registry.password
-  #             value: ((registry-info.password))
-  #           - key: domain
-  #             value: chartmuseum.35.184.11.158.nip.io
-  #           - key: imagePullPolicy
-  #             value: Always
-  #           - key: image.digest
-  #             path: app-image/digest
-  #         release: chartmuseum
+  - name: deploy
+    plan:
+      - get: app-image
+        passed:
+          - "build & push-registry"
+        trigger: true
+        params:
+          save: true
+      - task: master-digest
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: concourse/buildroot
+              tag: git
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                cat app-image/digest > ./app-digest/sha
+          inputs:
+            - name: app-image
+          outputs:
+            - name: app-digest
+      - put: helm
+        params:
+          chart: chartmuseum/graphql-backend
+          namespace: chartmuseum
+          override_values:
+            - key: registry.server
+              value: docker-registry.35.202.15.36.nip.io
+            - key: registry.username
+              value: admin
+            - key: registry.password
+              value: 123qweasd
+            - key: domain
+              value: chartmuseum.35.202.15.36.nip.io
+            - key: imagePullPolicy
+              value: Always
+            - key: image.digest
+              path: app-image/digest
+          release: graphql-backend
   # - task: do-your-task-here
   #   config:
   #     platform: linux
