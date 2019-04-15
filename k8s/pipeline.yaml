@@ -1,9 +1,8 @@
-resource_types:
-  - name: kubernetes
-    type: docker-image
-    source:
-      repository: zlabjp/kubernetes-resource
-      tag: "1.14"
+# resource_types:
+#   - name: helm
+#     type: docker-image
+#     source:
+#       repository: linkyard/concourse-helm-resource
 
 resources:
   - name: source-code
@@ -12,20 +11,23 @@ resources:
       branch: master
       uri: https://github.com/erkanzileli/graphql-backend
 
-  - name: k8s
-    type: kubernetes
-    source:
-      server: https://192.168.39.9:8443
-      namespace: graphql-backend
-      token: "eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJ0dGwtY29udHJvbGxlci10b2tlbi1zcHRuciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJ0dGwtY29udHJvbGxlciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjU2MjVjYjUwLTVkNjAtMTFlOS1hNjIzLTE0MjE1NGZkNjA5OCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTp0dGwtY29udHJvbGxlciJ9.parfgbcK2m0agSG7L5Hm8EV2RIeM3AHddXlQqf3tg0xeBwDy6QusdjuiRGfT9ay5-hP-WZ4VMufdiopbb_Xvhnp82u79x-2o3LinK7IVuJgfY-J6FqwNt3tN5i5EOvzDye82u49HV0IAffQIsGVheFVVmQjTjLC1SUXBHQU8_u670kQUxZ7GYGtrDEp63jC9U8Q7Dst8kg2mm046R5jWSOL5F-jAbH49jxyrUZeTvoO1k8MEwp42CrX4EFL3Hjs1Xfk87Xdv2T-yH1D-W5i6Pw8l_UcmmwH1k6Z8hD5fDLNLb4CKbl26xCo6JT-FDhfBqj4OaqvfW3p942gw5zE35A"
-      # certificate_authority: /home/erkanzileli/.minikube/ca.crt
-      insecure_skip_tls_verify: true
   - name: app-image
     type: docker-image
     source:
-      repository: 192.168.1.6:5000/grapql-backend
+      repository: docker-registry.35.202.15.36.nip.io/grapql-backend
       tag: "latest"
-      insecure_registries: ["http://192.168.1.6:5000"]
+      username: "admin"
+      password: "123qweasd"
+
+  # - name: helm
+  #   type: helm
+  #   source:
+  #     cluster_ca: ((cluster-ca.ca))
+  #     cluster_url: https://35.225.64.169
+  #     repos:
+  #       - name: chartmuseum
+  #         url: http://chartmuseum.34.66.59.109.nip.io
+  #     token: ((admin-user.token))
 
 jobs:
   - name: "build & push-registry"
@@ -37,28 +39,60 @@ jobs:
           build: source-code
         get_params:
           skip_download: true
-  - name: deploy
-    plan:
-      - get: source-code
-        trigger: true
-        passed:
-          - "build & push-registry"
-      - put: k8s
-        params:
-          kubectl: apply -f source-code/k8s/deployment.yaml
-          wait_until_ready_selector: app=graphql-backend
-        get_params:
-          skip_download: true
-    # - task: do-your-task-here
-    #   config:
-    #     platform: linux
-    #     image_resource:
-    #       type: docker-image
-    #       source:
-    #         repository: ubuntu
-    #     run:
-    #       path: bash
-    #       args:
-    #       - -exc
-    #       - |
-    #         du -s -h
+  # - name: deploy
+  #   plan:
+  #     - get: app-image
+  #       passed:
+  #         - "build & push-registry"
+  #       trigger: true
+  #       params:
+  #         save: true
+  #     - task: master-digest
+  #       config:
+  #         platform: linux
+  #         image_resource:
+  #           type: docker-image
+  #           source:
+  #             repository: concourse/buildroot
+  #             tag: git
+  #         run:
+  #           path: sh
+  #           args:
+  #             - -exc
+  #             - |
+  #               cat app-image/digest > ./app-digest/sha
+  #         inputs:
+  #           - name: app-image
+  #         outputs:
+  #           - name: app-digest
+  #     - put: helm
+  #       params:
+  #         chart: chartmuseum/graphql-backend
+  #         namespace: chartmuseum
+  #         override_values:
+  #           - key: registry.server
+  #             value: registry.hub.docker.com
+  #           - key: registry.username
+  #             value: ((registry-info.username))
+  #           - key: registry.password
+  #             value: ((registry-info.password))
+  #           - key: domain
+  #             value: chartmuseum.35.184.11.158.nip.io
+  #           - key: imagePullPolicy
+  #             value: Always
+  #           - key: image.digest
+  #             path: app-image/digest
+  #         release: chartmuseum
+  # - task: do-your-task-here
+  #   config:
+  #     platform: linux
+  #     image_resource:
+  #       type: docker-image
+  #       source:
+  #         repository: ubuntu
+  #     run:
+  #       path: bash
+  #       args:
+  #       - -exc
+  #       - |
+  #         du -s -h
