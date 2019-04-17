@@ -13,6 +13,6 @@ steps:
       repo: docker-registry.35.202.15.36.nip.io/graphql-backend
       tags: ["${DRONE_COMMIT_SHA}"]
       username:
-        from_secret: registry_username
+        from_secret: docker_username
       password:
-        from_secret: registry_password
+        from_secret: docker_password
