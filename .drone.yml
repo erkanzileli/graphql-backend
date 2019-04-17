@@ -11,8 +11,9 @@ steps:
     image: plugins/docker
     settings:
       repo: docker-registry.35.202.15.36.nip.io/graphql-backend
-      tags: ["${DRONE_COMMIT_SHA}"]
       username:
         from_secret: docker_username
       password:
         from_secret: docker_password
+      auto_tag: true
+      auto_tag_suffix: linux-amd64
