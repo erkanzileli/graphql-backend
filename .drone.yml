@@ -2,8 +2,17 @@ kind: pipeline
 name: node10
 
 steps:
-- name: test
-  image: node:10-slim
-  commands:
-  - yarn
-  - yarn test
+  - name: test
+    image: node:10-slim
+    commands:
+      - yarn
+      - yarn test
+  - name: docker
+    image: plugins/docker
+    settings:
+      repo: docker-registry.35.202.15.36.nip.io/graphql-backend
+      tags: ["${DRONE_COMMIT_SHA}"]
+      username:
+        from_secret: registry_username
+      password:
+        from_secret: registry_password
