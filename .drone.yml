@@ -1,8 +1,9 @@
 kind: pipeline
-name: default
+name: node10
 
 steps:
 - name: test
   image: node:10-slim
   commands:
-  - jest
+  - yarn
+  - yarn test
