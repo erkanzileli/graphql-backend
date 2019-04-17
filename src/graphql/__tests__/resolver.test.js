@@ -1,2 +1,5 @@
 import { MongoClient } from 'mongodb'
-it('should be pass', () => {})
+it('should pass', () => {})
+it('should not pass', () => {
+    expect(true).toBe(false)
+})
